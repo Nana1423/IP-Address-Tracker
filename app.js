@@ -1,3 +1,7 @@
+var marker
+var circle
+var popup
+
 // GET - API GeoIpify
 const callGeoIpify = (ipAddress) => {
     return fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=at_GGvVwQpnkx7ZlyALmgX1MDy8NsACf&ipAddress=${ipAddress}`)
@@ -22,19 +26,13 @@ const renderMap = async (ipAddress) => {
 
     map.setView([lat, lng], 15)
 
-    // Elimina objetos anteriores si existen
-    if (marker){
-        marker.remove()
-    }
-    if (circle){
+    // Removes elements if exist
+    if(circle){
         circle.remove()
-    }
-
-    if (popup){
+        marker.remove()
         popup.remove()
     }
-
-
+    
     // Location
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -42,10 +40,10 @@ const renderMap = async (ipAddress) => {
     }).addTo(map);
 
     // Marker
-    var marker = L.marker([lat, lng]).addTo(map);
-
+    marker = L.marker([lat, lng]).addTo(map);
+ 
     // Circle
-    var circle = L.circle([lat, lng], {
+    circle = L.circle([lat, lng], {
         color: 'red',
         fillColor: '#f03',
         fillOpacity: 0.5,
@@ -56,7 +54,7 @@ const renderMap = async (ipAddress) => {
     marker.bindPopup(`<b>${city}</b><br>${country}`).openPopup();
 
     // Popup Click event
-    var popup = L.popup();
+    popup = L.popup();
     function onMapClick(e) {
         popup
             .setLatLng(e.latlng)
@@ -80,7 +78,7 @@ button.addEventListener("click", (e) => {
 
 // Initialing the map
 var map = L.map('map').setView([0, 0], 2.5);
-// Location
+// Setting Default Location
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap'
