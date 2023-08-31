@@ -14,6 +14,20 @@ const callGeoIpify = (ipAddress) => {
         });
 }
 
+// Updates Info in UI
+const updateUI = async( city, timeZone, region) => {
+    const ipAddressText = document.querySelector("#ipAddress")
+    const locationText = document.querySelector("#location")
+    const timeZoneText = document.querySelector("#timeZone")
+    const regionText = document.querySelector("#region") // Internet Provider
+    const inputText = document.querySelector("#input")
+
+    ipAddressText.textContent = inputText.value
+    locationText.textContent = city
+    timeZoneText.textContent = `UTC${timeZone}`
+    regionText.textContent = region
+}
+
 // Generating the map
 const renderMap = async (ipAddress) => {
 
@@ -23,16 +37,19 @@ const renderMap = async (ipAddress) => {
     let region = data.region
     let city = data.city
     let country = data.country
+    let timeZone = data.timezone
+
+    await updateUI(city, timeZone, region)
 
     map.setView([lat, lng], 15)
 
     // Removes elements if exist
-    if(circle){
+    if (circle) {
         circle.remove()
         marker.remove()
         popup.remove()
     }
-    
+
     // Location
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -41,7 +58,7 @@ const renderMap = async (ipAddress) => {
 
     // Marker
     marker = L.marker([lat, lng]).addTo(map);
- 
+
     // Circle
     circle = L.circle([lat, lng], {
         color: 'red',
@@ -63,13 +80,13 @@ const renderMap = async (ipAddress) => {
     }
 
     map.on('click', onMapClick);
+    
+
 }
 
 // Event Listener
 const button = document.querySelector("#submit")
 const inputText = document.querySelector("#input")
-
-
 button.addEventListener("click", (e) => {
     e.preventDefault() // Evita que recargue la ventana
     let ipAddress = inputText.value
